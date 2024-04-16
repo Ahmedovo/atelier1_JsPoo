@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Blog Page</title>
+  <!-- Bootstrap CSS -->
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    /* Custom CSS */
+    .navbar {
+      background-color: white !important;
+      box-shadow: 0px 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .navbar-brand .logo {
+      color: black;
+      font-weight: bold;
+    }
+    .navbar-brand .logo span {
+      color: #007bff; /* Blue color for "Wall" */
+    }
+    .navbar-text {
+      margin-right: 20px;
+    }
+    .content {
+      padding-top: 20px; /* Adjust as needed */
+      padding-bottom: 20px; /* Adjust as needed */
+    }
+    #posts-container {
+      padding: 20px;
+    }
+    .post {
+      margin-bottom: 20px;
+      border: 1px solid #ccc;
+      padding: 10px;
+    }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container">
+    <a class="navbar-brand" href="#">
+      <span class="logo">{Code <span>Wall</span>}</span>
+    </a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto">
+        <li class="nav-item">
+          <a class="nav-link" href="#">MyBlog</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">LogIn</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="#">SignUp</a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="content">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <h5>Your Blog Posts</h5>
+      </div>
+      <div class="col-md-6 text-right">
+        <button class="btn btn-primary" data-toggle="modal" data-target="#addPostModal">Add New Post</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal fade" id="addPostModal" tabindex="-1" role="dialog" aria-labelledby="addPostModalLabel" aria-hidden="true">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="addPostModalLabel">Your Post</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div class="form-group">
+          <input type="text" class="form-control" id="postTitle" placeholder="Title">
+        </div>
+        <div class="form-group">
+          <textarea class="form-control" id="postDescription" rows="5" placeholder="Description"></textarea>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-primary" id="submitPostBtn">POST</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row">
+    <div class="col-md-12">
+    
+      <div id="posts-container"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Bootstrap JS (Optional) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+<script>
+class User {
+  constructor(username, email) {
+    this.username = username;
+    this.email = email;
+  }
+}
+
+class Post {
+  constructor(title, content, author) {
+    this.title = title;
+    this.content = content;
+    this.author = author;
+  }
+}
+
+class Blog {
+  constructor() {
+    this.posts = [];
+    this.users = [];
+  }
+
+  addUser(user) {
+    this.users.push(user);
+  }
+
+  addPost(post) {
+    this.posts.push(post);
+  }
+
+  listPosts(containerId) {
+    const container = document.getElementById(containerId);
+    if (!container) {
+      console.error("Container element not found.");
+      return;
+    }
+
+    container.innerHTML = ""; // Clear the container
+
+    this.posts.forEach((post, index) => {
+      const postDiv = document.createElement("div");
+      postDiv.classList.add("post");
+      postDiv.innerHTML = `
+        <h2>${post.title}</h2>
+        <p>${post.content}</p>
+        <hr>
+      `;
+      container.appendChild(postDiv);
+    });
+  }
+}
+
+// Create a blog
+const blog = new Blog();
+const postsTable = []; // Array to store posts
+
+// Function to add a post to the table and update the display
+function addPostToTable() {
+  const postTitleInput = document.getElementById("postTitle");
+  const postDescriptionInput = document.getElementById("postDescription");
+
+  const title = postTitleInput.value;
+  const description = postDescriptionInput.value;
+
+  if (!title || !description) {
+    alert("Please enter both title and description.");
+    return;
+  }
+
+  const newPost = new Post(title, description, "Anonymous");
+  postsTable.push(newPost);
+
+  // Update the display
+  displayPosts();
+}
+
+// Function to display all posts stored in the table
+function displayPosts() {
+  const postsContainer = document.getElementById("posts-container");
+
+  // Clear the container
+  postsContainer.innerHTML = "";
+
+  // Display each post
+  postsTable.forEach((post, index) => {
+    const postDiv = document.createElement("div");
+    postDiv.classList.add("post");
+    postDiv.innerHTML = `
+      <h2>${post.title}</h2>
+      <p>${post.content}</p>
+      <hr>
+    `;
+    postsContainer.appendChild(postDiv);
+  });
+}
+
+// Add click event listener to the "POST" button
+document.getElementById("submitPostBtn").addEventListener("click", () => {
+  addPostToTable();
+});
+
+
+</script>
+
+</body>
+</html>
